@@ -3,9 +3,9 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 const WILAYAH_COORD = {
-  Aceh: [5.55, 95.32],
-  Tamiang: [4.2328871, 98.0028892],
-  Langsat: [3.9149904, 98.4291086],
+  Bireuen: [5.222103, 96.7172907],
+  Langsa: [4.4709933, 97.96784],
+  Langkat: [3.9149904, 98.4291086],
   "Tapanuli Tengah": [1.691947, 98.8254711],
   Padang: [-0.8523712, 100.3443731],
   "Tanah Datar": [-0.4797043, 100.5746224],

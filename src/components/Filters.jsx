@@ -1,8 +1,8 @@
 export default function Filters({ filters, setFilters }) {
   const wilayahOptions = [
-    "Aceh",
-    "Tamiang",
-    "Langsat",
+    "Bireuen",
+    "Langsa",
+    "Langkat",
     "Tapanuli Tengah",
     "Padang",
     "Malalo",

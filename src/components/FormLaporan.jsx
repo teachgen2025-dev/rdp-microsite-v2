@@ -132,9 +132,9 @@ export default function FormLaporan() {
           <InputGroup label="Wilayah / Titik Respon">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                "Aceh",
-                "Tamiang",
-                "Langsat",
+                "Bireuen",
+                "Langsa",
+                "Langkat",
                 "Tapanuli Tengah",
                 "Padang",
                 "Malalo",
