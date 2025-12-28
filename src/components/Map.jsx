@@ -3,8 +3,10 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 const WILAYAH_COORD = {
+  "Banda Aceh": [5.5491809, 95.3333582],
   Bireuen: [5.222103, 96.7172907],
   Langsa: [4.4709933, 97.96784],
+  Medan: [3.593587, 98.6436385],
   Langkat: [3.9149904, 98.4291086],
   "Tapanuli Tengah": [1.691947, 98.8254711],
   Padang: [-0.8523712, 100.3443731],
@@ -67,10 +69,19 @@ export default function Map({ data }) {
           ];
         if (!coord) return null;
 
+        // --- LOGIC BARU ---
         const firstActivity = d.aktivitas
           ? d.aktivitas.split(",")[0].trim()
           : "Lainnya";
-        const iconColor = iconMap[firstActivity] || "blue";
+
+        // Jika aktivitas diawali kata "Lainnya" (misal: "Lainnya: Rapat"),
+        // paksa kuncinya jadi "Lainnya" agar warnanya hitam.
+        const activityKey = firstActivity.startsWith("Lainnya")
+          ? "Lainnya"
+          : firstActivity;
+
+        const iconColor = iconMap[activityKey] || "blue";
+        // ------------------
 
         return (
           <Marker key={i} position={coord} icon={getIcon(iconColor)}>
@@ -82,6 +93,7 @@ export default function Map({ data }) {
                 <h3 className="text-sm font-bold text-gray-800 mb-1">
                   {d.lokasi}
                 </h3>
+                {/* Di sini tetap menampilkan teks lengkap (misal: Lainnya: Rapat) */}
                 <div className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full mb-2">
                   {firstActivity}
                 </div>

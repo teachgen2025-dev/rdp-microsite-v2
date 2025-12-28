@@ -35,13 +35,28 @@ export default function Dashboard() {
   return (
     <div className="bg-gray-50 min-h-screen pb-12 relative">
       {/* Background Header */}
-      <div className="bg-blue-900 h-64 w-full absolute top-0 left-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-purple-900 opacity-90"></div>
+      <div className="h-[410px] w-full absolute top-0 left-0 z-0 overflow-hidden">
+        {/* 1. LAYER GAMBAR */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            // Pastikan nama file sesuai dgn yg ada di folder public
+            // Tanda '/' di awal artinya folder root (public)
+            backgroundImage: "url('/header-bg.jpg')",
+          }}
+        ></div>
+
+        {/* 2. LAYER OVERLAY (OPSIONAL) */}
+        {/* Ini penting supaya teks putih tetap terbaca. 
+            opacity-80 artinya transparansi 80%. Bisa diubah 50-90 sesuai selera. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 to-purple-900/40"></div>
+
+        {/* Pattern bintik-bintik (Pemanis, boleh dihapus kalau mau polos) */}
         <div
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
-            backgroundSize: "20px 20px",
+            backgroundSize: "10px 10px",
           }}
         ></div>
       </div>

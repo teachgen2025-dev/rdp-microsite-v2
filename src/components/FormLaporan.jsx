@@ -7,6 +7,11 @@ export default function FormLaporan() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // --- STATE BARU: Untuk Logic "Lainnya" ---
+  const [isLainnyaChecked, setIsLainnyaChecked] = useState(false);
+  const [lainnyaText, setLainnyaText] = useState("");
+  // ----------------------------------------
+
   // State untuk Data Kuantitatif (Auto Sum)
   const [pm, setPm] = useState({ siswa: 0, guru: 0, orangTua: 0, lainnya: 0 });
   const totalPm =
@@ -39,20 +44,34 @@ export default function FormLaporan() {
     setLoading(true);
     const f = e.target;
 
+    // --- LOGIC PENGGABUNGAN AKTIVITAS ---
+    // 1. Ambil semua checkbox yang dicentang
+    const rawChecked = Array.from(
+      f.querySelectorAll('input[name="aktivitas"]:checked')
+    ).map((cb) => cb.value);
+
+    // 2. Filter keluar tulisan "Lainnya" agar tidak duplikat
+    let finalAktivitas = rawChecked.filter((act) => act !== "Lainnya");
+
+    // 3. Jika checkbox Lainnya dicentang & ada isinya, masukkan ke array
+    if (isLainnyaChecked && lainnyaText.trim() !== "") {
+      finalAktivitas.push(`Lainnya: ${lainnyaText}`);
+    }
+
+    // 4. Gabungkan jadi string
+    const aktivitasString = finalAktivitas.join(", ");
+    // ------------------------------------
+
     const payload = {
       tanggal: f.tanggal.value,
-      waktu: f.waktu.value, // New Field
+      waktu: f.waktu.value,
       relawan: f.relawan.value,
       wilayah: f.wilayah.value,
-      lokasi: f.lokasi.value, // Lebih detail
+      lokasi: f.lokasi.value,
       school_kit: f.school_kit.value || 0,
 
-      // Checkbox Logic (Menggabungkan yg dipilih jadi string comma separated)
-      aktivitas: Array.from(
-        f.querySelectorAll('input[name="aktivitas"]:checked')
-      )
-        .map((cb) => cb.value)
-        .join(", "),
+      // Gunakan hasil logic di atas
+      aktivitas: aktivitasString,
 
       // Data Kuantitatif breakdown
       pm_siswa: pm.siswa,
@@ -62,10 +81,10 @@ export default function FormLaporan() {
       pm_total: totalPm,
       jumlah_relawan: f.jumlah_relawan.value,
 
-      // Narasi Baru
+      // Narasi
       kronologi: f.kronologi.value,
-      hal_baik: f.hal_baik.value, // Rename dari kendala
-      hal_perbaiki: f.hal_perbaiki.value, // Rename dari kebutuhan
+      hal_baik: f.hal_baik.value,
+      hal_perbaiki: f.hal_perbaiki.value,
       rencana_besok: f.rencana_besok.value,
 
       photos,
@@ -82,6 +101,10 @@ export default function FormLaporan() {
       f.reset();
       setPhotos([]);
       setPm({ siswa: 0, guru: 0, orangTua: 0, lainnya: 0 });
+
+      // Reset state Lainnya
+      setIsLainnyaChecked(false);
+      setLainnyaText("");
     } catch (err) {
       alert("❌ Gagal mengirim laporan");
       console.error(err);
@@ -132,8 +155,10 @@ export default function FormLaporan() {
           <InputGroup label="Wilayah / Titik Respon">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
+                "Banda Aceh",
                 "Bireuen",
                 "Langsa",
+                "Medan",
                 "Langkat",
                 "Tapanuli Tengah",
                 "Padang",
@@ -172,25 +197,52 @@ export default function FormLaporan() {
           </InputGroup>
 
           <InputGroup label="Jenis Aktivitas Utama (Bisa pilih lebih dari satu)">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-gray-50 p-4 rounded-lg border">
-              {[
-                "Sekolah Ceria (PSS)",
-                "Distribusi Logistik",
-                "Bantuan Tunai",
-                "Assessment",
-                "Training of Trainer",
-                "Lainnya",
-              ].map((act) => (
-                <label key={act} className="flex items-center space-x-2">
+            <div className="bg-gray-50 p-4 rounded-lg border">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                {[
+                  "Sekolah Ceria (PSS)",
+                  "Distribusi Logistik",
+                  "Bantuan Tunai",
+                  "Assessment",
+                  "Training of Trainer",
+                  "Lainnya",
+                ].map((act) => (
+                  <label
+                    key={act}
+                    className="flex items-center space-x-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      name="aktivitas"
+                      value={act}
+                      // -- Logic Checkbox Lainnya --
+                      onChange={(e) => {
+                        if (act === "Lainnya") {
+                          setIsLainnyaChecked(e.target.checked);
+                        }
+                      }}
+                      checked={act === "Lainnya" ? isLainnyaChecked : undefined}
+                      // ----------------------------
+                      className="rounded text-purple-600 focus:ring-purple-500 h-4 w-4"
+                    />
+                    <span className="text-gray-700 text-sm">{act}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* INPUT TEKS MUNCUL JIKA LAINNYA DICENTANG */}
+              {isLainnyaChecked && (
+                <div className="animate-pulse-once">
                   <input
-                    type="checkbox"
-                    name="aktivitas"
-                    value={act}
-                    className="rounded text-purple-600 focus:ring-purple-500 h-4 w-4"
+                    type="text"
+                    placeholder="Sebutkan aktivitas lainnya..."
+                    value={lainnyaText}
+                    onChange={(e) => setLainnyaText(e.target.value)}
+                    required
+                    className="w-full border border-purple-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
-                  <span className="text-gray-700 text-sm">{act}</span>
-                </label>
-              ))}
+                </div>
+              )}
             </div>
           </InputGroup>
         </Section>
