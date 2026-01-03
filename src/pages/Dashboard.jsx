@@ -3,6 +3,7 @@ import StatsGrid from "../components/StatsGrid"; // Pastikan ini sudah StatsGrid
 import Table from "../components/Table";
 import Map from "../components/Map";
 import LoadingSpinner from "../components/LoadingSpinner";
+import DetailModal from "../components/DetailModal";
 import { fetchReports } from "../api";
 import { useEffect, useState } from "react";
 
@@ -15,6 +16,8 @@ export default function Dashboard() {
     from: "",
     to: "",
   });
+
+  const [selectedReport, setSelectedReport] = useState(null);
 
   useEffect(() => {
     setLoading(true); // 👈 3. Set loading TRUE sebelum mulai fetch
@@ -35,6 +38,15 @@ export default function Dashboard() {
   return (
     <div className="bg-gray-50 min-h-screen pb-12 relative">
       {/* Background Header */}
+
+      {/* TAMBAHKAN MODAL DISINI */}
+      {selectedReport && (
+        <DetailModal
+          data={selectedReport}
+          onClose={() => setSelectedReport(null)}
+        />
+      )}
+
       <div className="h-[410px] w-full absolute top-0 left-0 z-0 overflow-hidden">
         {/* 1. LAYER GAMBAR */}
         <div
@@ -208,7 +220,10 @@ export default function Dashboard() {
                 <span className="w-2 h-6 bg-purple-600 rounded mr-2"></span>
                 Rincian Laporan Lapangan
               </h2>
-              <Table data={data} />
+              <Table
+                data={data}
+                onRowClick={(item) => setSelectedReport(item)}
+              />
             </div>
           </>
         )}{" "}
